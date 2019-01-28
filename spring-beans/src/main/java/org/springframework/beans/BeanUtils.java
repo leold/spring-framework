@@ -113,6 +113,7 @@ public abstract class BeanUtils {
 	 * from the constructor invocation itself.
 	 * @see Constructor#newInstance
 	 */
+	//创建当前Class的实例(通过声明的构造方法)
 	public static <T> T instantiateClass(Class<T> clazz) throws BeanInstantiationException {
 		Assert.notNull(clazz, "Class must not be null");
 		if (clazz.isInterface()) {
