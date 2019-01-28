@@ -288,6 +288,7 @@ public class ContextLoader {
 						ApplicationContext parent = loadParentContext(servletContext);
 						cwac.setParent(parent);
 					}
+					//配置并刷新WebApplicationContext的相关参数
 					configureAndRefreshWebApplicationContext(cwac, servletContext);
 				}
 			}
@@ -329,10 +330,12 @@ public class ContextLoader {
 	 */
 	protected WebApplicationContext createWebApplicationContext(ServletContext sc) {
 		Class<?> contextClass = determineContextClass(sc);
+		//创建的WebApplicationContext对象必须继承自ConfigurableWebApplicationContext
 		if (!ConfigurableWebApplicationContext.class.isAssignableFrom(contextClass)) {
 			throw new ApplicationContextException("Custom context class [" + contextClass.getName() +
 					"] is not of type [" + ConfigurableWebApplicationContext.class.getName() + "]");
 		}
+		//实例化并转为ConfigurableWebApplicationContext类型
 		return (ConfigurableWebApplicationContext) BeanUtils.instantiateClass(contextClass);
 	}
 
@@ -500,6 +503,7 @@ public class ContextLoader {
 	 */
 	@Nullable
 	protected ApplicationContext loadParentContext(ServletContext servletContext) {
+		//临时的方法，待重写
 		return null;
 	}
 
