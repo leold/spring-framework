@@ -54,6 +54,7 @@ public interface ThemeResolver {
 	 * @param request request to be used for resolution
 	 * @return the current theme name
 	 */
+	//解析主题信息（User-Agent）
 	String resolveThemeName(HttpServletRequest request);
 
 	/**
@@ -64,6 +65,7 @@ public interface ThemeResolver {
 	 * @throws UnsupportedOperationException if the ThemeResolver implementation
 	 * does not support dynamic changing of the theme
 	 */
+	//设置主题
 	void setThemeName(HttpServletRequest request, @Nullable HttpServletResponse response, @Nullable String themeName);
 
 }

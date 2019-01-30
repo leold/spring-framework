@@ -58,6 +58,7 @@ public interface LocaleResolver {
 	 * @param request the request to resolve the locale for
 	 * @return the current locale (never {@code null})
 	 */
+	//解析国际化信息（Accept-Language）
 	Locale resolveLocale(HttpServletRequest request);
 
 	/**
@@ -68,6 +69,7 @@ public interface LocaleResolver {
 	 * @throws UnsupportedOperationException if the LocaleResolver
 	 * implementation does not support dynamic changing of the locale
 	 */
+	//设置国际化信息
 	void setLocale(HttpServletRequest request, @Nullable HttpServletResponse response, @Nullable Locale locale);
 
 }

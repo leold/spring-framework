@@ -29,6 +29,8 @@ import org.springframework.lang.Nullable;
  * @since 3.1
  * @see FlashMap
  */
+//Spring MVC Flash Attribute
+// https://www.oschina.net/translate/spring-mvc-flash-attribute-example
 public interface FlashMapManager {
 
 	/**
@@ -42,6 +44,7 @@ public interface FlashMapManager {
 	 * @param response the current response
 	 * @return a FlashMap matching the current request or {@code null}
 	 */
+	//恢复并删除参数
 	@Nullable
 	FlashMap retrieveAndUpdate(HttpServletRequest request, HttpServletResponse response);
 
@@ -55,6 +58,7 @@ public interface FlashMapManager {
 	 * @param request the current request
 	 * @param response the current response
 	 */
+	//（重定向时）保存参数
 	void saveOutputFlashMap(FlashMap flashMap, HttpServletRequest request, HttpServletResponse response);
 
 }

@@ -91,6 +91,7 @@ public interface MultipartResolver {
 	 * @param request the servlet request to be evaluated
 	 * @return whether the request contains multipart content
 	 */
+	//是否multipart请求（Content-Type为multipart）
 	boolean isMultipart(HttpServletRequest request);
 
 	/**
@@ -110,6 +111,7 @@ public interface MultipartResolver {
 	 * @see javax.servlet.http.HttpServletRequest#getParameterNames
 	 * @see javax.servlet.http.HttpServletRequest#getParameterMap
 	 */
+	//解析multipart格式请求参数，将HttpServletRequest转换为MultipartHttpServletRequest
 	MultipartHttpServletRequest resolveMultipart(HttpServletRequest request) throws MultipartException;
 
 	/**
@@ -117,6 +119,7 @@ public interface MultipartResolver {
 	 * like a storage for the uploaded files.
 	 * @param request the request to cleanup resources for
 	 */
+	//清理处理multipart时产生的资源
 	void cleanupMultipart(MultipartHttpServletRequest request);
 
 }
