@@ -94,14 +94,18 @@ public abstract class AbstractFlashMapManager implements FlashMapManager {
 			return null;
 		}
 
+		//获取过期的FlashMap
 		List<FlashMap> mapsToRemove = getExpiredFlashMaps(allFlashMaps);
+		//获取匹配本次request的FlashMap
 		FlashMap match = getMatchingFlashMap(allFlashMaps, request);
 		if (match != null) {
 			mapsToRemove.add(match);
 		}
 
+		//此处如果需要删除的FlashMap不为空的话，加锁获取当前request的FlashMap再进行操作
 		if (!mapsToRemove.isEmpty()) {
 			Object mutex = getFlashMapsMutex(request);
+			//获取当前request的FlashMaps信号量，重新获取当前request的FlashMap，删除需要删除的FlashMap
 			if (mutex != null) {
 				synchronized (mutex) {
 					allFlashMaps = retrieveFlashMaps(request);
@@ -111,6 +115,7 @@ public abstract class AbstractFlashMapManager implements FlashMapManager {
 					}
 				}
 			}
+			//获取当前request的FlashMap信号量失败，直接删除需要删除的FlashMap
 			else {
 				allFlashMaps.removeAll(mapsToRemove);
 				updateFlashMaps(allFlashMaps, request, response);
@@ -137,6 +142,7 @@ public abstract class AbstractFlashMapManager implements FlashMapManager {
 	 * Return a FlashMap contained in the given list that matches the request.
 	 * @return a matching FlashMap or {@code null}
 	 */
+	//从List<FlashMap>中获取与当前request匹配的那个
 	@Nullable
 	private FlashMap getMatchingFlashMap(List<FlashMap> allMaps, HttpServletRequest request) {
 		List<FlashMap> result = new LinkedList<>();
@@ -159,6 +165,7 @@ public abstract class AbstractFlashMapManager implements FlashMapManager {
 	 * Whether the given FlashMap matches the current request.
 	 * Uses the expected request path and query parameters saved in the FlashMap.
 	 */
+	//对比当前FlashMap是否属于当前Request，1、请求uri是否一致；2、query参数是否一致
 	protected boolean isFlashMapForRequest(FlashMap flashMap, HttpServletRequest request) {
 		String expectedPath = flashMap.getTargetRequestPath();
 		if (expectedPath != null) {

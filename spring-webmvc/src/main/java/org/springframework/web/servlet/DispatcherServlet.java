@@ -1007,17 +1007,21 @@ public class DispatcherServlet extends FrameworkServlet {
 			Exception dispatchException = null;
 
 			try {
+				//检查是否Multipart请求，如果是则进行Multipart文件的解析
 				processedRequest = checkMultipart(request);
+				//如果request和一开始不一样了，说明已经进行了Multipart解析
 				multipartRequestParsed = (processedRequest != request);
 
 				// Determine handler for the current request.
 				mappedHandler = getHandler(processedRequest);
 				if (mappedHandler == null) {
+					//没有发现对应的Handler，包装response，返回404
 					noHandlerFound(processedRequest, response);
 					return;
 				}
 
 				// Determine handler adapter for the current request.
+				//获取当前request的处理适配器
 				HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());
 
 				// Process last-modified header, if supported by the handler.
@@ -1030,18 +1034,23 @@ public class DispatcherServlet extends FrameworkServlet {
 					}
 				}
 
+				//执行preHandle拦截器
 				if (!mappedHandler.applyPreHandle(processedRequest, response)) {
 					return;
 				}
 
 				// Actually invoke the handler.
+				// 实际调用handler，返回ModelAndView
 				mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
 
+				//如果已经有其他线程进行了处理，直接返回
 				if (asyncManager.isConcurrentHandlingStarted()) {
 					return;
 				}
 
+				//如果mv为空或没有View，设置一个默认的View
 				applyDefaultViewName(processedRequest, mv);
+				//执行postHandle拦截器
 				mappedHandler.applyPostHandle(processedRequest, response, mv);
 			}
 			catch (Exception ex) {
@@ -1172,6 +1181,7 @@ public class DispatcherServlet extends FrameworkServlet {
 			}
 			else {
 				try {
+					//解析multipartRequest（文件和参数）
 					return this.multipartResolver.resolveMultipart(request);
 				}
 				catch (MultipartException ex) {
@@ -1198,6 +1208,7 @@ public class DispatcherServlet extends FrameworkServlet {
 			if (error instanceof MultipartException) {
 				return true;
 			}
+			//如果不是MultipartException，则向上遍历，以判断是不是继承自MultipartException
 			error = error.getCause();
 		}
 		return false;
@@ -1247,6 +1258,7 @@ public class DispatcherServlet extends FrameworkServlet {
 		if (pageNotFoundLogger.isWarnEnabled()) {
 			pageNotFoundLogger.warn("No mapping for " + request.getMethod() + " " + getRequestUri(request));
 		}
+		//此处可以配置，未找到对应的Handler时抛出异常而不是返回404
 		if (this.throwExceptionIfNoHandlerFound) {
 			throw new NoHandlerFoundException(request.getMethod(), getRequestUri(request),
 					new ServletServerHttpRequest(request).getHeaders());

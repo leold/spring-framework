@@ -980,11 +980,13 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 			processRequest(request, response);
 			if (response.containsHeader("Allow")) {
 				// Proper OPTIONS response coming from a handler - we're done.
+				// 如果响应的Header中包含Allow，则直接返回
 				return;
 			}
 		}
 
 		// Use response wrapper in order to always add PATCH to the allowed methods
+		// 调用父类HttpServlet的doOptions方法，在response的Header中放入Allow
 		super.doOptions(request, new HttpServletResponseWrapper(response) {
 			@Override
 			public void setHeader(String name, String value) {
@@ -1009,6 +1011,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 			processRequest(request, response);
 			if ("message/http".equals(response.getContentType())) {
 				// Proper TRACE response coming from a handler - we're done.
+				// 如果响应的ContentType为message/http，则直接返回
 				return;
 			}
 		}
@@ -1026,10 +1029,14 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 		long startTime = System.currentTimeMillis();
 		Throwable failureCause = null;
 
+		//获取之前的国际化信息
 		LocaleContext previousLocaleContext = LocaleContextHolder.getLocaleContext();
+		//获取本次请求的国际化信息
 		LocaleContext localeContext = buildLocaleContext(request);
 
+		//获取之前的请求属性
 		RequestAttributes previousAttributes = RequestContextHolder.getRequestAttributes();
+		//如果之前的请求属性不为null且是ServletRequestAttributes类型，创建当前的requestAttributes
 		ServletRequestAttributes requestAttributes = buildRequestAttributes(request, response, previousAttributes);
 
 		WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request);
