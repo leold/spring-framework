@@ -50,6 +50,8 @@ public class HandlerExecutionChain {
 	@Nullable
 	private List<HandlerInterceptor> interceptorList;
 
+	//已执行preHandle()的位置
+	//主要用来实现applyPostHandle()的逻辑
 	private int interceptorIndex = -1;
 
 
@@ -99,6 +101,7 @@ public class HandlerExecutionChain {
 		}
 	}
 
+	//初始化一个空的interceptorList和interceptors，并返回List
 	private List<HandlerInterceptor> initInterceptorList() {
 		if (this.interceptorList == null) {
 			this.interceptorList = new ArrayList<>();
@@ -135,10 +138,13 @@ public class HandlerExecutionChain {
 		if (!ObjectUtils.isEmpty(interceptors)) {
 			for (int i = 0; i < interceptors.length; i++) {
 				HandlerInterceptor interceptor = interceptors[i];
+				//触发前置处理
 				if (!interceptor.preHandle(request, response, this.handler)) {
+					//处理失败，触发处理成功的拦截器的已完成处理
 					triggerAfterCompletion(request, response, null);
 					return false;
 				}
+				//处理成功，标记拦截器位置
 				this.interceptorIndex = i;
 			}
 		}
@@ -170,12 +176,14 @@ public class HandlerExecutionChain {
 
 		HandlerInterceptor[] interceptors = getInterceptors();
 		if (!ObjectUtils.isEmpty(interceptors)) {
+			//倒序执行之前处理成功的拦截器的已完成处理
 			for (int i = this.interceptorIndex; i >= 0; i--) {
 				HandlerInterceptor interceptor = interceptors[i];
 				try {
 					interceptor.afterCompletion(request, response, this.handler, ex);
 				}
 				catch (Throwable ex2) {
+					//执行失败时并不结束循环
 					logger.error("HandlerInterceptor.afterCompletion threw exception", ex2);
 				}
 			}
