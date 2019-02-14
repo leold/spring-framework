@@ -41,9 +41,11 @@ public class RequestMappingInfoHandlerMethodMappingNamingStrategy
 
 	@Override
 	public String getName(HandlerMethod handlerMethod, RequestMappingInfo mapping) {
+		//如果mapping的名字非空，则使用mapping的name
 		if (mapping.getName() != null) {
 			return mapping.getName();
 		}
+		//使用类名的大写拼接+"#"+方法名
 		StringBuilder sb = new StringBuilder();
 		String simpleTypeName = handlerMethod.getBeanType().getSimpleName();
 		for (int i = 0 ; i < simpleTypeName.length(); i++) {

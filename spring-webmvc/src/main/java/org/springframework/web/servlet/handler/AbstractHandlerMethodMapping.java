@@ -91,9 +91,11 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 
 	private boolean detectHandlerMethodsInAncestorContexts = false;
 
+	//Mapping命名策略
 	@Nullable
 	private HandlerMethodMappingNamingStrategy<T> namingStrategy;
 
+	//Mapping注册表
 	private final MappingRegistry mappingRegistry = new MappingRegistry();
 
 
@@ -583,6 +585,7 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 		}
 
 		public void register(T mapping, Object handler, Method method) {
+			//加写锁，初始化全局变量
 			this.readWriteLock.writeLock().lock();
 			try {
 				HandlerMethod handlerMethod = createHandlerMethod(handler, method);
@@ -650,6 +653,7 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 			this.nameLookup.put(name, newList);
 		}
 
+		//注销某个mapping
 		public void unregister(T mapping) {
 			this.readWriteLock.writeLock().lock();
 			try {
